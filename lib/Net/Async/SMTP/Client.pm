@@ -151,15 +151,17 @@ sub connected {
 			: (),
 		);
 		$self->add_child($stream);
-		$stream->send_greeting->then(sub {
-			return Future->wrap($stream) unless $stream->has_feature('STARTTLS');
+		$stream->startup->then(sub {
+			$stream->send_greeting->then(sub {
+				return Future->wrap($stream) unless $stream->has_feature('STARTTLS');
 
-			# Currently need to have this loaded to find ->sslwrite
-			require IO::Async::SSLStream;
+				# Currently need to have this loaded to find ->sslwrite
+				require IO::Async::SSLStream;
 
-			$stream->starttls(
-				$self->ssl_parameters
-			)
+				$stream->starttls(
+					$self->ssl_parameters
+				)
+			});
 		});
 	});
 }

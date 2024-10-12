@@ -42,12 +42,16 @@ sub _add_to_loop {
 		writer => sub { $self->write(@_) },
 		auth_mechanism_override => $self->auth,
 	);
-	$self->protocol->startup;
 	$self->SUPER::_add_to_loop($loop);
 }
 
 sub auth { shift->{auth} }
 sub protocol { shift->{protocol} }
+
+sub startup {
+	my $self = shift;
+	$self->protocol->startup;
+}
 
 sub send_greeting {
 	my $self = shift;
